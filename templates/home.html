@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+  <nav class="navbar">
+    <span class="nav-brand">Haven</span>
+    <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+  </nav>
+
+  <div class="dashboard">
+    <h2>Hello, {{ patient[1] }}. 💙</h2>
+    <p class="welcome-note">This is your safe place. Take your time.</p>
+
+    <div class="card-grid">
+      <a href="{{ url_for('companion') }}" class="card">
+        <div class="card-icon">🤝</div>
+        <div class="card-title">Companion</div>
+        <div class="card-desc">Talk to someone who listens.</div>
+      </a>
+      <a href="{{ url_for('mood') }}" class="card">
+        <div class="card-icon">🌿</div>
+        <div class="card-title">Mood</div>
+        <div class="card-desc">How are you feeling today?</div>
+      </a>
+      <a href="{{ url_for('legacy') }}" class="card">
+        <div class="card-icon">✉️</div>
+        <div class="card-title">Legacy Vault</div>
+        <div class="card-desc">Words for the people you love.</div>
+      </a>
+      <a href="{{ url_for('settings') }}" class="card">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">Settings</div>
+        <div class="card-desc">Your account and family access.</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
