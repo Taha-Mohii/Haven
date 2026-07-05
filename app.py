@@ -78,7 +78,31 @@ def home():
 @app.route("/companion")
 @login_required
 def companion():
-    return render_template("companion.html")
+    from database import get_conversations
+    from ai import get_ai_response
+    history = get_conversations(session["patient_id"])
+    return render_template("companion.html",history=history)
+
+@app.route("/companion/send", methods=["POST"])
+@login_required
+def companion_send():
+    from database import get_conversations , save_message
+    from ai import get_ai_response
+
+    user_message = request.form["message"].strip()
+    if not user_message:
+        return redirect(url_for("companion"))
+    
+    patient_id = session["patient_id"]
+    save_message(patient_id, "user", user_message)
+
+    history = get_conversations(patient_id)
+    patient = get_patient_by_id(patient_id)
+    ai_reply = get_ai_response(patient, history)
+
+    save_message(patient_id, "assistant", ai_reply)
+
+    return redirect(url_for("companion"))
 
 @app.route("/mood")
 @login_required

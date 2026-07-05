@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Companion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="nav-back">← Home</a>
+    <span class="nav-brand">Haven</span>
+    <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+  </nav>
+
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      {% if not history %}
+        <p class="chat-empty">Haven is here. Take your time. Say anything.</p>
+      {% endif %}
+
+      {% for role, message in history %}
+        <div class="chat-message {{ role }}">
+          <p>{{ message }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <form class="chat-form" method="POST" action="{{ url_for('companion_send') }}">
+      <input
+        type="text"
+        name="message"
+        placeholder="Say something..."
+        autocomplete="off"
+        autofocus
+      >
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+  </div>
+</body>
+<script>
+  // Auto scroll to bottom on load
+  const chatBox = document.getElementById("chatBox");
+  chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+</html>
