@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Write</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+  <nav class="navbar">
+    <a href="{{ url_for('legacy') }}" class="nav-back">← Vault</a>
+    <span class="nav-brand">Haven</span>
+    <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+  </nav>
+
+  <div class="dashboard">
+    <h2>Write something</h2>
+    <p class="welcome-note">Take your time. These words will wait for the right moment.</p>
+
+    <form method="POST" class="write-form">
+      <label>What is this?
+        <select name="type">
+          <option value="letter">A letter</option>
+          <option value="memory">A memory</option>
+          <option value="wish">A wish</option>
+        </select>
+      </label>
+
+      <label>Title
+        <input type="text" name="title" placeholder="Give it a name..." required>
+      </label>
+
+      <label>For who?
+        <input type="text" name="recipient_name" placeholder="Recipient's name" required>
+      </label>
+
+      <label>Their email
+        <input type="email" name="recipient_email" placeholder="So Haven can deliver it" required>
+      </label>
+
+      <label>Their phone (WhatsApp)
+        <input type="text" name="recipient_phone" placeholder="Phone number">
+      </label>
+
+      <label>When should Haven deliver this?
+        <input type="date" name="scheduled_date">
+        <span class="field-hint">Leave blank to send after you're gone.</span>
+      </label>
+
+      <label>Your words
+        <textarea name="content" rows="10" placeholder="Write freely. This is your space." required></textarea>
+      </label>
+
+      <button type="submit" class="btn btn-primary">Save to my vault</button>
+    </form>
+  </div>
+</body>
+</html>

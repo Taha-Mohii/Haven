@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haven — View Entry</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+    <nav class="navbar">
+        <a href="{{ url_for('legacy')}}" class="nav-back">← Vault</a>
+        <span class="nav-breand">Haven</span>
+        <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+    </nav>
+    
+    <div class="dashboard">
+        <div class="view-header">
+            <div class="view-type">{{ entry[2] }}</div>
+            <h2>{{ entry[6] }}</h2>
+            <p class="view-recepient">For {{ entry[3] }}</p>
+            <p class="view-delivery">
+                {% if entry[8] %}
+                    scheduled for {{ entry[8] }}
+                {% else %}
+                    To be delivered after you're gone.
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="view-content">
+            {{ entry[7] }}
+        </div>
+
+        <div class="view-actions">
+            <a href="{{ url_for('legacy_delete', entry_id = entry[0])}}"
+                class="btn btn-delete"
+                onclick="return confirm('Are you sure you want to delete this..?')">Delete</a>
+        </div>
+    </div>
+</body>
+</html>

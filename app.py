@@ -120,7 +120,43 @@ def mood():
 @app.route("/legacy")
 @login_required
 def legacy():
-    return render_template("legacy.html")
+    from database import get_legacy
+    entries = get_legacy(session["patient_id"])
+    return render_template("legacy.html", entries=entries)
+
+@app.route("/legacy/write", methods=["GET" , "POST"])
+@login_required
+def legacy_write():
+    from database import save_legacy
+    if request.method == "POST":
+        save_legacy(
+            patient_id = session["patient_id"],
+            type  = request.form["type"],
+            recipient_name  = request.form["recipient_name"].strip(),
+            recipient_email = request.form["recipient_email"].strip(),
+            recipient_phone  = request.form["recipient_phone"].strip(),
+            title   = request.form["title"].strip(),
+            content  = request.form["content"].strip(),
+            scheduled_date  = request.form["scheduled_date"] or None
+        )
+        return redirect(url_for("legacy"))
+    return render_template("write.html")
+
+@app.route("/legacy/view/<int:entry_id>")
+@login_required
+def legacy_view(entry_id):
+    from database import get_legacy_entry
+    entry = get_legacy_entry(entry_id)
+    return render_template("view.html", entry=entry)
+
+
+@app.route("/legacy/delete/<int:entry_id>")
+@login_required
+def legacy_delete(entry_id):
+    from database import delete_legacy
+    delete_legacy(entry_id)
+    return redirect(url_for("legacy"))
+
 
 @app.route("/settings")
 @login_required
