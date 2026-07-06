@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haven — Mood</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="nav-back">← Home</a>
+    <span class="nav-brand">Haven</span>
+    <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+    </nav>
+    
+    <div class="dashboard">
+        <h2>How are you feeling today..?</h2>
+        <p class="welcome-note">There are no wrong answers here.</p>
+
+        <form method="post" class="mood-form">
+            <div class="mood-slider-wrap">
+                <label>On a scale of 1 to 10, how are you feeling..?</label>
+                <input type="range" name="score" min="1" max="10" value="5" id="scoreRange"
+                    oninput="document.getElementById('scoreDisplay').innerText = this.value">
+                    <span class="mood-score" id="scoreDisplay">5</span>
+            </div>
+            <div class="mood-note-wrap">
+                <label>Anything you'd like to say about it..?</label>
+                <textarea name="note" rows="3" placeholder="optional -- just for you"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Say how I feel</button>
+        </form>
+
+        {% if moods %}
+            <div class="mood-history">
+                <h3>Recent moods</h3>
+                {% for score, note, timestamp in moods %}
+                    <div class="mood-entry">
+                        <div class="mood-entry-score">{{ score }}/10</div>
+                        <div class="mood-entry-details">
+                        <p class="mood-entry-note">{{ note if note else "No note." }}</p>
+                        <p class="mood-entry-time">{{ timestamp.strftime('%B %d, %Y — %I:%M %p') }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

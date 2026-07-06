@@ -104,10 +104,18 @@ def companion_send():
 
     return redirect(url_for("companion"))
 
-@app.route("/mood")
+@app.route("/mood", methods=["GET", "POST"])
 @login_required
 def mood():
-    return render_template("mood.html")
+    from database import save_mood, get_moods
+    if request.method == "POST":
+        score = int(request.form["score"])
+        note  = request.form["note"].strip()
+        save_mood(session["patient_id"], score ,note)
+        return redirect(url_for("mood"))
+    
+    moods = get_moods(session["patient_id"])
+    return render_template("mood.html",moods=moods)
 
 @app.route("/legacy")
 @login_required
