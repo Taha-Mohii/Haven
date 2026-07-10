@@ -11,6 +11,10 @@ from functools import wraps
 
 load_dotenv()
 
+from scheduler import start_scheduler
+start_scheduler()
+
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 
