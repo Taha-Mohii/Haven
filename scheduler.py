@@ -56,24 +56,37 @@ def check_activity():
 
 def deliver_all_legacy(cursor, conn, patient_id, patient_name):
     cursor.execute("""
-        SELECT id, recipient_name, recipient_email, title, content
+        SELECT id, recipient_name, recipient_email, recipient_phone, title, content
         FROM legacy
         WHERE patient_id = %s AND delivered = FALSE
     """, (patient_id,))
     entries = cursor.fetchall()
 
     for entry in entries:
-        entry_id       = entry[0]
+        entry_id        = entry[0]
         recipient_name  = entry[1]
         recipient_email = entry[2]
-        title          = entry[3]
-        content        = entry[4]
+        recipient_phone = entry[3]
+        title           = entry[4]
+        content         = entry[5]
 
-        success = send_email(recipient_name, recipient_email, patient_name, title, content)
-        if success:
+        delivered = False
+
+        if recipient_email:
+            success = send_email(recipient_name, recipient_email, patient_name, title, content)
+            if success:
+                delivered = True
+
+        if recipient_phone:
+            from delivery import send_whatsapp
+            success = send_whatsapp(recipient_phone, patient_name, title)
+            if success:
+                delivered = True
+
+        if delivered:
             cursor.execute("UPDATE legacy SET delivered = TRUE WHERE id = %s", (entry_id,))
             conn.commit()
-            print(f"Legacy letter '{title}' delivered to {recipient_email}")
+            print(f"Legacy letter '{title}' delivered.")
 
     cursor.execute("UPDATE activity_log SET letters_sent = TRUE WHERE patient_id = %s", (patient_id,))
     conn.commit()
@@ -83,7 +96,7 @@ def check_scheduled_letters(cursor, conn):
     today = datetime.now().date()
     cursor.execute("""
         SELECT l.id, l.recipient_name, l.recipient_email,
-               l.title, l.content, p.name
+               l.recipient_phone, l.title, l.content, p.name
         FROM legacy l
         JOIN haven_patients p ON l.patient_id = p.id
         WHERE l.scheduled_date = %s AND l.delivered = FALSE
@@ -91,13 +104,33 @@ def check_scheduled_letters(cursor, conn):
     entries = cursor.fetchall()
 
     for entry in entries:
-        success = send_email(entry[1], entry[2], entry[5], entry[3], entry[4])
-        if success:
-            cursor.execute("UPDATE legacy SET delivered = TRUE WHERE id = %s", (entry[0],))
+        entry_id        = entry[0]
+        recipient_name  = entry[1]
+        recipient_email = entry[2]
+        recipient_phone = entry[3]
+        title           = entry[4]
+        content         = entry[5]
+        patient_name    = entry[6]
+
+        delivered = False
+
+        if recipient_email:
+            success = send_email(recipient_name, recipient_email, patient_name, title, content)
+            if success:
+                delivered = True
+
+        if recipient_phone:
+            from delivery import send_whatsapp
+            success = send_whatsapp(recipient_phone, patient_name, title)
+            if success:
+                delivered = True
+
+        if delivered:
+            cursor.execute("UPDATE legacy SET delivered = TRUE WHERE id = %s", (entry_id,))
             conn.commit()
-            print(f"Scheduled letter '{entry[3]}' delivered to {entry[2]}")
+            print(f"Scheduled letter '{title}' delivered.")
 
-
+            
 def start_scheduler():
     scheduler = BackgroundScheduler()
     scheduler.add_job(check_activity, "interval", hours=24)
