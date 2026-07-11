@@ -118,3 +118,51 @@ def generate_legacy_pdf(patient_name ,entries ,output_path="legacy_vault.pdf"):
     doc.build(story)
     print(f"PDF generated at {output_path}")
     return output_path
+
+
+def send_email(recipient_name, recipient_email, patient_name, title , content, access_token=None):
+    family_link = ""
+    if access_token:
+        base_url = os.getenv("BASE_URL", "http://127.0.0.1:5000")
+        family_link = f"""
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="{base_url}/family/{access_token}" 
+               style="background: #7a9e9f; color: white; padding: 0.75rem 2rem; 
+                      border-radius: 30px; text-decoration: none; font-family: Georgia, serif;">
+                Read this letter online
+            </a>
+        </div>
+        """
+
+        html_content = f"""
+        <div style="font-family: Georgia, serif; max-width: 600px; margin: auto; color: #3d3d3d;">
+        <h2 style="color: #7a9e9f;">A letter for you, from {patient_name}</h2>
+        <hr style="border: none; border-top: 1px solid #eee;">
+        <p>Dear {recipient_name},</p>
+        <p>{patient_name} wrote this for you. They wanted you to have these words.</p>
+        <hr style="border: none; border-top: 1px solid #eee;">
+        <div style="background: #fdf6f0; padding: 1.5rem; border-radius: 8px; line-height: 1.8; white-space: pre-wrap;">
+            {content}
+        </div>
+        {family_link}
+        <hr style="border: none; border-top: 1px solid #eee;">
+        <p style="color: #aaa; font-size: 0.85rem;">Written with love. Delivered by Haven.</p>
+    </div>
+    """
+
+    message = Mail(
+        from_email=FROM_EMAIL,
+        to_email = recipient_email,
+        subject=f"A letter for you from {patient_name}",
+        html_content=html_content
+    )
+
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        sg.send(message)
+        print(f"Email sent to {recipient_email}")
+        return True
+    
+    except Exception as e:
+        print("Email failed: {e}")
+        return False

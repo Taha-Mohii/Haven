@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A letter for you</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="family-page">
+  <div class="family-container">
+
+    <div class="family-header">
+      <h1 class="family-brand">Haven</h1>
+      <p class="family-subtitle">A safe place for everything unsaid.</p>
+    </div>
+
+    <div class="family-card">
+      <p class="family-from">A {{ entry[2] }} from {{ entry[-1] }}</p>
+      <h2 class="family-title">{{ entry[6] }}</h2>
+      <p class="family-recipient">For {{ entry[3] }}</p>
+
+      <div class="family-divider"></div>
+
+      <div class="family-content">{{ entry[7] }}</div>
+
+      <div class="family-divider"></div>
+
+      <p class="family-footer">Written with love. Delivered by Haven. 💙</p>
+    </div>
+
+  </div>
+</body>
+</html>

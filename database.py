@@ -91,15 +91,20 @@ def get_moods(patient_id):
 #legacy
 
 def save_legacy(patient_id, type, recipient_name, recipient_email, recipient_phone,title, content, scheduled_date=None):
+    import uuid
+    token = str(uuid.uuid4())
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO legacy 
-        (patient_id, type, recipient_name, recipient_email, recipient_phone, title, content, scheduled_date)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    """, (patient_id, type, recipient_name, recipient_email, recipient_phone, title, content, scheduled_date))
+        (patient_id, type, recipient_name, recipient_email, recipient_phone, title, content, scheduled_date,access_token)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id, access_token
+    """, (patient_id, type, recipient_name, recipient_email, recipient_phone, title, content, scheduled_date,token))
+    result = cursor.fetchone()
     conn.commit()
     conn.close()
+    return result
 
 def get_legacy(patient_id):
     conn = get_conn()
@@ -116,6 +121,19 @@ def get_legacy_entry(entry_id):
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM legacy WHERE id = %s", (entry_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+def get_legacy_by_token(token):
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT l.*, p.name as patient_name
+        FROM legacy l
+        JOIN haven_patients p ON l.patient_id = p.id
+        WHERE l.access_token = %s
+    """, (token,))
     row = cursor.fetchone()
     conn.close()
     return row

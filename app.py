@@ -172,5 +172,13 @@ def settings():
 def landing():
     return render_template("landing.html")
 
+@app.route("/family/<token>")
+def family_view(token):
+    from database import get_legacy_by_token
+    entry = get_legacy_by_token(token)
+    if not entry:
+        return render_template("404.html"), 404
+    return render_template("family.html", entry=entry)
+
 if __name__ == "__main__":
     app.run(debug=True)

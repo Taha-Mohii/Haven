@@ -69,6 +69,7 @@ def deliver_all_legacy(cursor, conn, patient_id, patient_name):
         recipient_phone = entry[3]
         title           = entry[4]
         content         = entry[5]
+        access_token    = entry[6]
 
         delivered = False
 
@@ -95,12 +96,12 @@ def deliver_all_legacy(cursor, conn, patient_id, patient_name):
 def check_scheduled_letters(cursor, conn):
     today = datetime.now().date()
     cursor.execute("""
-        SELECT l.id, l.recipient_name, l.recipient_email,
-               l.recipient_phone, l.title, l.content, p.name
-        FROM legacy l
-        JOIN haven_patients p ON l.patient_id = p.id
-        WHERE l.scheduled_date = %s AND l.delivered = FALSE
-    """, (today,))
+    SELECT l.id, l.recipient_name, l.recipient_email,
+           l.recipient_phone, l.title, l.content, l.access_token, p.name
+    FROM legacy l
+    JOIN haven_patients p ON l.patient_id = p.id
+    WHERE l.scheduled_date = %s AND l.delivered = FALSE
+""", (today,))
     entries = cursor.fetchall()
 
     for entry in entries:
@@ -110,12 +111,14 @@ def check_scheduled_letters(cursor, conn):
         recipient_phone = entry[3]
         title           = entry[4]
         content         = entry[5]
-        patient_name    = entry[6]
+        access_token    = entry[6]
+        patient_name    = entry[7]
 
         delivered = False
 
         if recipient_email:
-            success = send_email(recipient_name, recipient_email, patient_name, title, content)
+            access_token = entry[6] if len(entry) > 6 else None
+            success = send_email(recipient_name, recipient_email, patient_name, title, content, access_token)
             if success:
                 delivered = True
 

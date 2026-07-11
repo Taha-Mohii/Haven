@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Settings</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="nav-back">← Home</a>
+    <span class="nav-brand">Haven</span>
+    <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+  </nav>
+
+  <div class="dashboard">
+    <h2>Settings</h2>
+    <p class="welcome-note">Your account and personal details.</p>
+
+    <div class="settings-card">
+      <div class="settings-row">
+        <span class="settings-label">Name</span>
+        <span class="settings-value">{{ patient[1] }}</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Age</span>
+        <span class="settings-value">{{ patient[2] }}</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Condition</span>
+        <span class="settings-value">{{ patient[3] }}</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Username</span>
+        <span class="settings-value">{{ patient[5] }}</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Member since</span>
+        <span class="settings-value">{{ patient[7].strftime('%B %d, %Y') }}</span>
+      </div>
+    </div>
+
+    <div class="settings-danger">
+      <a href="{{ url_for('logout') }}" class="btn btn-delete">Leave Haven</a>
+    </div>
+  </div>
+</body>
+</html>
