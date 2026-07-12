@@ -75,9 +75,11 @@ def logout():
 @app.route("/home")
 @login_required
 def home():
+    from database import get_dashboard_stats
     patient = get_patient_by_id(session["patient_id"])
     update_activity(session["patient_id"])
-    return render_template("home.html", patient=patient)
+    stats = get_dashboard_stats(session["patient_id"])
+    return render_template("home.html", patient=patient, stats=stats)
 
 @app.route("/companion")
 @login_required

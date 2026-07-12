@@ -1,6 +1,7 @@
 import psycopg2
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -183,3 +184,36 @@ def get_activity(patient_id):
     row = cursor.fetchone()
     conn.close()
     return row
+
+#dashboard
+def get_dashboard_stats(patient_id):
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM legacy WHERE patient_id = %s", (patient_id,))
+    letter_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM conversations WHERE patient_id = %s", (patient_id,))
+    message_count = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT score, note FROM moods 
+        WHERE patient_id = %s 
+        ORDER BY timestamp DESC LIMIT 1
+    """, (patient_id,))
+    last_mood = cursor.fetchone()
+
+    cursor.execute("SELECT last_seen FROM activity_log WHERE patient_id = %s", (patient_id,))
+    activity = cursor.fetchone()
+    if activity:
+        days_active = (datetime.now() - activity[0]).days
+    else:
+        days_active = 0
+
+    conn.close()
+    return {
+        "letter_count"  : letter_count,
+        "message_count" : message_count,
+        "last_mood"     : last_mood,
+        "days_active"   : days_active
+    }

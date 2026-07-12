@@ -16,6 +16,31 @@
     <h2>Hello, {{ patient[1] }}. 💙</h2>
     <p class="welcome-note">This is your safe place. Take your time.</p>
 
+    <div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-number">{{ stats.letter_count }}</div>
+    <div class="stat-label">Letters written</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ stats.message_count }}</div>
+    <div class="stat-label">Messages with Haven</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">
+      {% if stats.last_mood %}
+        {{ stats.last_mood[0] }}/10
+      {% else %}
+        —
+      {% endif %}
+    </div>
+    <div class="stat-label">Last mood</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ stats.days_active }}</div>
+    <div class="stat-label">Days since last visit</div>
+  </div>
+</div>
+
     <div class="card-grid">
       <a href="{{ url_for('companion') }}" class="card">
         <div class="card-icon">🤝</div>

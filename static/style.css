@@ -696,3 +696,31 @@ input[type="range"]::-webkit-slider-thumb {
   font-style: italic;
   margin-top: 1rem;
 }
+
+/* ─── Stats ─────────────────────────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #e8e0f0;
+  border-radius: 16px;
+  padding: 1.2rem;
+  text-align: center;
+  box-shadow: 6px 6px 12px #c8c0d8, -6px -6px 12px #ffffff;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #7a9e9f;
+  margin-bottom: 0.3rem;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: #8880a0;
+}
