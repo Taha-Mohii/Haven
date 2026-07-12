@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Edit</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="app-page">
+  <nav class="navbar">
+    <a href="{{ url_for('legacy_view', entry_id=entry[0]) }}" class="nav-back">← Back</a>
+    <span class="nav-brand">Haven</span>
+    <a href="{{ url_for('logout') }}" class="nav-logout">Leave quietly</a>
+  </nav>
+
+  <div class="dashboard">
+    <h2>Edit your words</h2>
+    <p class="welcome-note">Take your time. Change whatever feels right.</p>
+
+    <form method="POST" class="write-form">
+      <label>What is this?
+        <select name="type">
+          <option value="letter" {% if entry[2] == 'letter' %}selected{% endif %}>A letter</option>
+          <option value="memory" {% if entry[2] == 'memory' %}selected{% endif %}>A memory</option>
+          <option value="wish"   {% if entry[2] == 'wish' %}selected{% endif %}>A wish</option>
+        </select>
+      </label>
+
+      <label>Title
+        <input type="text" name="title" value="{{ entry[6] }}" required>
+      </label>
+
+      <label>For who?
+        <input type="text" name="recipient_name" value="{{ entry[3] }}" required>
+      </label>
+
+      <label>Their email
+        <input type="email" name="recipient_email" value="{{ entry[4] if entry[4] else '' }}">
+      </label>
+
+      <label>Their phone (WhatsApp)
+        <input type="text" name="recipient_phone" value="{{ entry[5] if entry[5] else '' }}" placeholder="Phone number">
+      </label>
+
+      <label>When should Haven deliver this?
+        <input type="date" name="scheduled_date" value="{{ entry[8] if entry[8] else '' }}">
+        <span class="field-hint">Leave blank to send after you're gone.</span>
+      </label>
+
+      <label>Your words
+        <textarea name="content" rows="10" required>{{ entry[7] }}</textarea>
+      </label>
+
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+  </div>
+</body>
+</html>

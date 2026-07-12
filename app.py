@@ -146,6 +146,26 @@ def legacy_write():
         return redirect(url_for("legacy"))
     return render_template("write.html")
 
+@app.route("/legacy/edit/<int:entry_id>", methods=["GET" , "POST"])
+@login_required
+def legacy_edit(entry_id):
+    from database import get_legacy_entry, update_legacy
+    entry = get_legacy_entry(entry_id)
+
+    if request.method == "POST":
+        update_legacy(
+            entry_id        = entry_id,
+            type            = request.form["type"],
+            recipient_name  = request.form["recipient_name"].strip(),
+            recipient_email = request.form["recipient_email"].strip(),
+            recipient_phone = request.form["recipient_phone"].strip(),
+            title           = request.form["title"].strip(),
+            content         = request.form["content"].strip(),
+            scheduled_date  = request.form["scheduled_date"] or None
+        )
+        return redirect(url_for("legacy_view", entry_id=entry_id))
+    return render_template("edit.html", entry=entry)
+
 @app.route("/legacy/view/<int:entry_id>")
 @login_required
 def legacy_view(entry_id):

@@ -32,9 +32,10 @@
         </div>
 
         <div class="view-actions">
-            <a href="{{ url_for('legacy_delete', entry_id = entry[0])}}"
-                class="btn btn-delete"
-                onclick="return confirm('Are you sure you want to delete this..?')">Delete</a>
+        <a href="{{ url_for('legacy_edit', entry_id=entry[0]) }}" class="btn btn-primary">Edit</a>
+        <a href="{{ url_for('legacy_delete', entry_id=entry[0]) }}"
+            class="btn btn-delete"
+            onclick="return confirm('Are you sure you want to delete this..?')">Delete</a>
         </div>
     </div>
 </body>

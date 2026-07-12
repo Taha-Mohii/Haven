@@ -145,6 +145,23 @@ def delete_legacy(entry_id):
     conn.commit()
     conn.close()
 
+def update_legacy(entry_id, type, recipient_name, recipient_email, recipient_phone, title, content, scheduled_date=None):
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE legacy
+        SET type = %s,
+            recipient_name = %s,
+            recipient_email = %s,
+            recipient_phone = %s,
+            title = %s,
+            content = %s,
+            scheduled_date = %s
+        WHERE id = %s
+    """, (type, recipient_name, recipient_email, recipient_phone, title, content, scheduled_date, entry_id))
+    conn.commit()
+    conn.close()
+
 #Activity log
 
 def update_activity(patient_id):
