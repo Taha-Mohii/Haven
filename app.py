@@ -184,10 +184,30 @@ def legacy_delete(entry_id):
     return redirect(url_for("legacy"))
 
 
-@app.route("/settings")
+@app.route("/settings", methods=["GET" , "POST"])
 @login_required
 def settings():
+    from database import update_patient, update_password
     patient = get_patient_by_id(session["patient_id"])
+
+    if request.method == "POST":
+        action = request.form.get("action")
+
+        if action == "update_profile":
+                name      = request.form["name"].strip()
+                age       = int(request.form["age"])
+                condition = request.form["condition"].strip()
+                update_patient(session["patient_id"], name, age, condition)
+                session["patient_name"] = name
+                return redirect(url_for("settings"))
+
+        elif action == "update_password":
+            current  = request.form["current_password"]
+            new_pass = request.form["new_password"]
+            if not check_password(current, patient[6]):
+                return render_template("settings.html", patient=patient, error="Current password is incorrect.")
+            update_password(session["patient_id"], hash_password(new_pass))
+            return redirect(url_for("settings"))    
     return render_template("settings.html", patient=patient)
 
 @app.route("/")

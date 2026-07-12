@@ -217,3 +217,25 @@ def get_dashboard_stats(patient_id):
         "last_mood"     : last_mood,
         "days_active"   : days_active
     }
+
+def update_patient(patient_id, name, age, condition):
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE haven_patients
+        SET name = %s , age = %s, condition = %s
+        WHERE id = %s    
+    """, (name, age, condition, patient_id))
+    conn.commit()
+    conn.close()
+
+def update_password(patient_id, password_hash):
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE haven_patients
+        SET password_hash = %s
+        WHERE id = %s
+    """, (password_hash, patient_id))
+    conn.commit()
+    conn.close()

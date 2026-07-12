@@ -17,26 +17,55 @@
     <h2>Settings</h2>
     <p class="welcome-note">Your account and personal details.</p>
 
-    <div class="settings-card">
-      <div class="settings-row">
-        <span class="settings-label">Name</span>
-        <span class="settings-value">{{ patient[1] }}</span>
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Age</span>
-        <span class="settings-value">{{ patient[2] }}</span>
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Condition</span>
-        <span class="settings-value">{{ patient[3] }}</span>
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Username</span>
-        <span class="settings-value">{{ patient[5] }}</span>
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Member since</span>
-        <span class="settings-value">{{ patient[7].strftime('%B %d, %Y') }}</span>
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <!-- Profile Update -->
+    <div class="settings-section">
+      <h3 class="settings-heading">Update Profile</h3>
+      <form method="POST" class="write-form">
+        <input type="hidden" name="action" value="update_profile">
+        <label>Name
+          <input type="text" name="name" value="{{ patient[1] }}" required>
+        </label>
+        <label>Age
+          <input type="number" name="age" value="{{ patient[2] }}" required>
+        </label>
+        <label>Condition
+          <input type="text" name="condition" value="{{ patient[3] }}" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </form>
+    </div>
+
+    <!-- Password Update -->
+    <div class="settings-section">
+      <h3 class="settings-heading">Change Password</h3>
+      <form method="POST" class="write-form">
+        <input type="hidden" name="action" value="update_password">
+        <label>Current password
+          <input type="password" name="current_password" required>
+        </label>
+        <label>New password
+          <input type="password" name="new_password" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Update password</button>
+      </form>
+    </div>
+
+    <!-- Account Info -->
+    <div class="settings-section">
+      <h3 class="settings-heading">Account Info</h3>
+      <div class="settings-card">
+        <div class="settings-row">
+          <span class="settings-label">Username</span>
+          <span class="settings-value">{{ patient[5] }}</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Member since</span>
+          <span class="settings-value">{{ patient[7].strftime('%B %d, %Y') }}</span>
+        </div>
       </div>
     </div>
 

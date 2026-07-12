@@ -724,3 +724,15 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 0.78rem;
   color: #8880a0;
 }
+/* ─── Settings Sections ─────────────────────────────────────────────────────── */
+.settings-section {
+  margin-bottom: 2.5rem;
+  max-width: 580px;
+}
+
+.settings-heading {
+  color: #7a9e9f;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
