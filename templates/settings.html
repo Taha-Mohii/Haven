@@ -64,8 +64,7 @@
         </div>
         <div class="settings-row">
           <span class="settings-label">Member since</span>
-          <span class="settings-value">{{ patient[7].strftime('%B %d, %Y') }}</span>
-        </div>
+<span class="settings-value">{{ patient[7].strftime('%B %d, %Y') if patient[7] else 'N/A' }}</span>        </div>
       </div>
     </div>
 

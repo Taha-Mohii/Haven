@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Verify Code</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <h2>Check your WhatsApp</h2>
+    <p class="subtitle">Enter the 6-digit code we sent you. It expires in 10 minutes.</p>
+
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+      <label>Verification code
+        <input type="text" name="otp" placeholder="xxxxxx" required autofocus>
+      </label>
+      <button type="submit" class="btn btn-primary">Verify</button>
+    </form>
+
+    <p class="auth-switch"><a href="{{ url_for('forgot_password') }}">← Try again</a></p>
+  </div>
+</body>
+</html>

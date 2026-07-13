@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from database import (
     create_patient, get_patient_by_username,
-    get_patient_by_id, update_activity
+    get_patient_by_id, update_activity,update_password
 )
 
 from security import hash_password, check_password
@@ -30,23 +30,27 @@ def login_required(f):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        name   = request.form["name"].strip()
-        age    = int(request.form["age"])
-        condition= request.form["condition"].strip()
-        username = request.form["username"].strip()
-        password = request.form["password"]
+        name      = request.form["name"].strip()
+        age       = int(request.form["age"])
+        condition = request.form["condition"].strip()
+        phone     = request.form["phone"].strip()
+        username  = request.form["username"].strip()
+        password  = request.form["password"]
+
+        print("Form data:", name, age, condition, phone, username)
 
         if get_patient_by_username(username):
             return render_template("register.html", error="Username already taken.")
-        
+
         password_hash = hash_password(password)
-        patient_id = create_patient(name,age,condition, username,password_hash)
+        patient_id = create_patient(name, age, condition, username, password_hash, phone)
+        print("Created patient ID:", patient_id)
 
         session["patient_id"] = patient_id
         session["patient_name"] = name
         update_activity(patient_id)
         return redirect(url_for("home"))
-    
+
     return render_template("register.html")
 
 @app.route("/login",methods=["GET" , "POST"])
@@ -113,15 +117,19 @@ def companion_send():
 @app.route("/mood", methods=["GET", "POST"])
 @login_required
 def mood():
-    from database import save_mood, get_moods
+    from database import save_mood, get_moods, check_mood_flag
+    flag_message = None
+
     if request.method == "POST":
         score = int(request.form["score"])
         note  = request.form["note"].strip()
-        save_mood(session["patient_id"], score ,note)
-        return redirect(url_for("mood"))
-    
+        save_mood(session["patient_id"], score, note)
+        flag, flag_message = check_mood_flag(score, note)
+        moods = get_moods(session["patient_id"])
+        return render_template("mood.html", moods=moods, flag_message=flag_message)
+
     moods = get_moods(session["patient_id"])
-    return render_template("mood.html",moods=moods)
+    return render_template("mood.html", moods=moods, flag_message=None)
 
 @app.route("/legacy")
 @login_required
@@ -221,6 +229,65 @@ def family_view(token):
     if not entry:
         return render_template("404.html"), 404
     return render_template("family.html", entry=entry)
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    from database import get_patient_by_username_and_phone,save_otp
+    import random
+
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        phone   = request.form["phone"].strip()
+
+        patient = get_patient_by_username_and_phone(username,phone)
+        if not patient:
+            return render_template("forgot_password.html", error = "No account found with that username and phone number.")
+        
+        otp = str(random.randint(100000, 999999))
+        save_otp(patient[0], otp)
+
+        from delivery import send_whatsapp_otp
+        print("Sending OTP:", otp, "to phone:", phone)
+        result = send_whatsapp_otp(phone, otp)
+        print("OTP send result:", result)
+
+        session["reset_patient_id"] = patient[0]
+        return redirect(url_for("verify_otp_route"))
+    
+    return render_template("forgot_password.html")
+
+@app.route("/verify-otp", methods=["GET", "POST"])
+def verify_otp_route():
+    from database import verify_otp
+
+    if "reset_patient_id" not in session:
+        return redirect(url_for("forgot_password"))
+
+    if request.method == "POST":
+        otp = request.form["otp"].strip()
+        if verify_otp(session["reset_patient_id"], otp):
+            session["otp_verified"] = True
+            return redirect(url_for("reset_password"))
+        return render_template("verify_otp.html", error="Invalid or expired OTP. Try again.")
+
+    return render_template("verify_otp.html")
+
+
+@app.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+    from database import update_password
+    if "otp_verified" not in session or not session["otp_verified"]:
+        return redirect(url_for("forgot_password"))
+
+    if request.method == "POST":
+        new_password = request.form["new_password"]
+        update_password(session["reset_patient_id"], hash_password(new_password))
+        session.pop("reset_patient_id", None)
+        session.pop("otp_verified", None)
+        return redirect(url_for("login"))
+
+    return render_template("reset_password.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

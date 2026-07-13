@@ -166,3 +166,24 @@ def send_email(recipient_name, recipient_email, patient_name, title , content, a
     except Exception as e:
         print("Email failed: {e}")
         return False
+    
+def send_whatsapp_otp(phone, otp):
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token  = os.getenv("TWILIO_AUTH_TOKEN")
+    from_phone  = os.getenv("TWILIO_PHONE")
+
+    client = Client(account_sid, auth_token)
+
+    message = f"Your Haven verification code is: *{otp}*\n\nThis code expires in 10 minutes."
+
+    try:
+        client.messages.create(
+            body  = message,
+            from_ = from_phone,
+            to    = f"whatsapp:{phone}"
+        )
+        print(f"OTP sent to {phone}")
+        return True
+    except Exception as e:
+        print(f"OTP WhatsApp failed: {e}")
+        return False

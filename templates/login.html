@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haven — Sign In </title>
+    <title>Haven — Sign In</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="auth-page">
@@ -15,19 +15,18 @@
             <p class="error">{{ error }}</p>
         {% endif %}
 
-        <form method="post">
-            <label>
-                Username
+        <form method="POST">
+            <label>Username
                 <input type="text" name="username" required autofocus>
             </label>
-            <label>
-                Password
+            <label>Password
                 <input type="password" name="password" required>
             </label>
             <button type="submit" class="btn btn-primary">Come in</button>
         </form>
 
-        <p class="auth-switch">New here..?<a href="{{ url_for('register') }}">Create Your Haven</a></p>
+        <p class="auth-switch">New here? <a href="{{ url_for('register') }}">Create your Haven</a></p>
+        <p class="auth-switch"><a href="{{ url_for('forgot_password') }}">Forgot your password?</a></p>
     </div>
 </body>
 </html>

@@ -11,19 +11,20 @@ def get_conn():
     return psycopg2.connect(DB_URL)
 
 #patients
-def create_patient(name,age,condition,username,password_hash,medivault_patient_id=None):
+def create_patient(name, age, condition, username, password_hash, phone, medivault_patient_id=None):
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO haven_patients
-        (name,age,condition,username,password_hash,medivault_patient_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        (name, age, condition, username, password_hash, phone, medivault_patient_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING id
-    """, (name, age, condition,username, password_hash, medivault_patient_id))
+    """, (name, age, condition, username, password_hash, phone, medivault_patient_id))
     patient_id = cursor.fetchone()[0]
     conn.commit()
     conn.close()
     return patient_id
+
 
 def get_patient_by_username(username):
     conn = get_conn()
@@ -239,3 +240,71 @@ def update_password(patient_id, password_hash):
     """, (password_hash, patient_id))
     conn.commit()
     conn.close()
+
+
+def check_mood_flag(score, note):
+    flag = False
+    message = None
+    concerning_words = [
+        "pain", "done", "goodbye", "scared", "afraid",
+        "alone", "hopeless", "tired", "end", "no point",
+        "give up", "can't", "cannot", "worthless"
+    ]
+
+    if score <= 3:
+        flag = True
+
+    if note:
+        note_lower = note.lower()
+        for word in concerning_words:
+            if word in note_lower:
+                flag = True
+                break
+
+    if flag:
+        message = "Haven hears you. Whatever you're feeling right now is okay. You don't have to carry this alone. 💙"
+
+    return flag, message
+
+def get_patient_by_username_and_phone(username, phone):
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM haven_patients
+        WHERE username = %s AND phone = %s
+    """, (username , phone))
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+def save_otp(patient_id, otp):
+    from datetime import datetime, timedelta
+    conn = get_conn()
+    cursor = conn.cursor()
+    expiry = datetime.now() + timedelta(minutes=10)
+    cursor.execute("""
+        UPDATE haven_patients 
+        SET otp = %s, otp_expiry = %s 
+        WHERE id = %s
+    """, (otp, expiry, patient_id))
+    conn.commit()
+    conn.close()
+
+def verify_otp(patient_id, otp):
+    from datetime import datetime
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT otp, otp_expiry FROM haven_patients 
+        WHERE id = %s
+    """, (patient_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return False
+    stored_otp  = row[0]
+    otp_expiry  = row[1]
+    if stored_otp == otp and datetime.now() < otp_expiry:
+        return  True
+    return False

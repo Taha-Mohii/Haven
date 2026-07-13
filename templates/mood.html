@@ -16,6 +16,12 @@
     <div class="dashboard">
         <h2>How are you feeling today..?</h2>
         <p class="welcome-note">There are no wrong answers here.</p>
+        
+        {% if flag_message %}
+        <div class="flag-message">
+         {{ flag_message }}
+        </div>
+        {% endif %}
 
         <form method="post" class="mood-form">
             <div class="mood-slider-wrap">
