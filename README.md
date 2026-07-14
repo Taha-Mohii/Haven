@@ -3,18 +3,6 @@
 
 ---
 
-## The Problem
-
-Every day, thousands of people face a reality that no one prepares them for — a terminal diagnosis. In those final weeks and months, patients often carry an enormous emotional weight in silence. They want to talk, but don't want to burden their families. They want to leave something behind, but don't know how. They want someone to listen, without judgment, without rushing, without false hope.
-
-The people around them — doctors, nurses, family — are doing their best. But no one has enough time. No one can be there at 3am when the fear sets in.
-
-Haven was built for those moments.
-
-This project was born from a deeply personal place. Watching my father go through a serious illness, and meeting others like him in hospital corridors — people who had so much left to say and no quiet place to say it — made it clear that something was missing. Not a medical tool. Not a productivity app. Just a companion. Warm, patient, and always there.
-
----
-
 ## What Is Haven?
 
 Haven is an AI-powered emotional companion for patients in their final days. It gives them:
@@ -188,9 +176,8 @@ Visit `http://127.0.0.1:5000`
 
 ## Known Limitations
 
-- **Twilio sandbox** — WhatsApp uses Twilio's free sandbox. Recipients must opt in every 72 hours by messaging `join film-enter` to `+14155238886`. In production this would use a verified business number.
-- **Local only** — Haven currently runs locally. It can be deployed to Railway or Render with minimal changes.
-- **No voice or media** — Future versions could support voice notes and photos in the legacy vault.
+- Twilio WhatsApp uses a sandbox — recipients must opt in every 72 hours
+- Currently runs locally only — deployment ready for Railway or Render
 
 ---
 
