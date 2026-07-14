@@ -308,3 +308,14 @@ def verify_otp(patient_id, otp):
     if stored_otp == otp and datetime.now() < otp_expiry:
         return  True
     return False
+
+def delete_patient(patient_id):
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM activity_log WHERE patient_id = %s", (patient_id,))
+    cursor.execute("DELETE FROM conversations WHERE patient_id = %s", (patient_id,))
+    cursor.execute("DELETE FROM moods WHERE patient_id = %s", (patient_id,))
+    cursor.execute("DELETE FROM legacy WHERE patient_id = %s", (patient_id,))
+    cursor.execute("DELETE FROM haven_patients WHERE id = %s", (patient_id,))
+    conn.commit()
+    conn.close()

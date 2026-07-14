@@ -64,12 +64,18 @@
         </div>
         <div class="settings-row">
           <span class="settings-label">Member since</span>
-<span class="settings-value">{{ patient[7].strftime('%B %d, %Y') if patient[7] else 'N/A' }}</span>        </div>
+          <span class="settings-value">{{ patient[7].strftime('%B %d, %Y') if patient[7] else 'N/A' }}</span>        </div>
       </div>
     </div>
 
     <div class="settings-danger">
-      <a href="{{ url_for('logout') }}" class="btn btn-delete">Leave Haven</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-delete">Leave quietly</a>
+      <form method="POST" action="{{ url_for('delete_account') }}" style="display:inline;">
+        <button type="submit" class="btn btn-delete"
+          onclick="return confirm('Are you sure? This will permanently delete your account and everything in it.')">
+          Delete my account
+        </button>
+      </form>
     </div>
   </div>
 </body>

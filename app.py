@@ -288,6 +288,14 @@ def reset_password():
 
     return render_template("reset_password.html")
 
+@app.route("/delete_account", methods=["POST"])
+@login_required
+def delete_account():
+    from database import delete_patient
+    delete_patient(session["patient_id"])
+    session.clear()
+    return redirect(url_for("landing"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
